@@ -1,0 +1,114 @@
+---
+title: "RNASeqAna Analysis Pipeline"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## RNA Seq Data R analysis pipeline based on edgeR and self-created package RNASeqAna
+
+This is the document which show the analysis pipeline using RNASeqAna.
+
+Before staring using RNASeqAna, the raw sequencing data should be preprocessed. 
+
+Here I use popular pipiline to get raw count data.
+
+1. fastQC to visualize the quality of data
+2. trimmomatic to trim adaptors 
+3. sortmerna to remove all rRNA
+4. STAR to do alignment
+5. HTSeq-count to get raw count
+
+After you got the count files, we can use RNASeqAna to do downstream analysis
+
+###install package
+```{r eval=F}
+library(devtools)
+library(roxygen2)
+document("./RNASeqAna")
+install("RNASeqAna")
+
+library("RNASeqAna")
+
+```
+
+###View the quanlity of raw count
+
+```{r eval=F}
+
+dir <- "~/RNA_Seq/RNA_Seq/IWP0005JJ/Quantifier"
+files <- c("1.fastq_count.txt","2.fastq_count.txt",
+           "3.fastq_count.txt","4.fastq_count.txt",
+           "5.fastq_count.txt","6.fastq_count.txt",
+           "7.fastq_count.txt","8.fastq_count.txt",
+           "9.fastq_count.txt","10.fastq_count.txt",
+           "11.fastq_count.txt","12.fastq_count.txt")
+
+files <- paste(files, ".deseq2", sep="")
+condition <- factor(c(0,0,0,1,1,1,2,2,2,3,3,3))
+outprefix <- "IWP0005JJ"
+qcPlots(files, dir, condition, outprefix)
+
+```
+
+###Get the edgeR fit model
+
+```{r eval=F }
+
+
+fit <- edgeRAnaFit(files, dir, group, outprefix)
+
+```
+
+###Get pairwise df genes 
+```{r eval=F}
+
+coefs = list(2,3,4,c(0,-1,1,0),c(0,-1,0,1),c(0,0,-1,1))
+names = list("condition_1_vs_0","condition_2_vs_0","condition_3_vs_0",
+             "condition_2_vs_1","condition_3_vs_1","condition_3_vs_2")
+dfGenes = list()
+for (i in (1:length(coefs))){
+  coef = coefs[[i]]
+  out = names[[i]]
+  dfGenes[[i]] = edgeRdfGenes(fit, coef)
+}
+
+edgeRAnaWrite(dfGenes,names, dir, outprefix)
+
+
+```
+
+
+###Pathway analysis
+```{r eval=F}
+
+#pathwway analysis
+#kegg pathway
+pathways = edgeRAnaKEGG(lrts, fdr=0.05, dir, comparisons, outprefix)
+
+#get significatn pathways
+sign_path <- getPathway(pathways, fdr=0.05, out= T, dir, outprefix)
+
+#map genes to significant pathway
+mapped_genes <- edgeRAnaMapedGene2Pathway(sign_path,df, out=T, dir ,outprefix)
+
+#GO
+gos= edgeRAnaGO(lrts, fdr=0.05, dir, comparisons, outprefix)
+
+
+#reactome pathway
+reactome <- edgeRAnaReactome(df, fdr=0.05, dir, comparisons, outprefix)
+
+#pathview datat
+edgeRAnaPathview(mapped_genes, "~/RNA_Seq/RNA_Seq/IWP0004JJ/Quantifier/pathview")
+
+
+```
+
+
+
+
+
