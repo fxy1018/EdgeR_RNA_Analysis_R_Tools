@@ -11,7 +11,7 @@
 #' @examples edgeRAnaKEGG(pathway, up=FALSE)
 #' edgeRAnaKEGG()
 
-edgeRAnaKEGG <- function(lrts, dfCutOff=0.05, dir, comparisons, outprefix, spe){
+edgeRAnaKEGG <- function(lrts, dfCutOff, dir, comparisons, outprefix, spe){
   #kegg pathway analysis
   all = data.frame(PathID=integer(), Pathway=character(), N=integer(),
                   Up=integer(), Down=integer(),

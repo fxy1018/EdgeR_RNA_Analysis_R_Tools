@@ -8,8 +8,8 @@
 #' @examples edgeRAnaMapedGene2Pathway(pathways, df)
 #' edgeRAnaMapedGene2Pathway()
 
-edgeRAnaMapedGene2Pathway <- function(pathways, df,out=T, dir=NA, outprefix=NA, spe){
-  df = df[df$FDR<0.05,]
+edgeRAnaMapedGene2Pathway <- function(sign_path, df, dfCutoff, out=T, dir=NA, outprefix=NA, spe){
+  df = df[df$FDR<dfCutoff,]
   df$GeneID = rownames(df)
   
   #get all kegg gene and pathway information

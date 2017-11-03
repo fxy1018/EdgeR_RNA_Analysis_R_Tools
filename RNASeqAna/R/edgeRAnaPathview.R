@@ -26,6 +26,8 @@ edgeRAnaPathview <- function(mapped_genes, dir, spe){
     sub_pattern = "path:hsa"
   }else if (spe=="rat"){
     sub_pattern = "path:rno"
+  }else if (spe=="mouse"){
+    sub_pattern = "path:mmu"
   }
 
   for (l in levels(conditions)) {
@@ -33,6 +35,7 @@ edgeRAnaPathview <- function(mapped_genes, dir, spe){
     setwd(file.path(dir, l))
     sub_data <- data[data$Comparison==l,]
     pathways <- unique(sub_data$PathID)
+    
     for (p_id in pathways){
       path_data <- sub_data[sub_data$PathID==p_id, c("GeneID", "logFC")]
       gene_ids = path_data$GeneID

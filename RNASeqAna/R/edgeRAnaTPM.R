@@ -12,7 +12,15 @@
 
 edgeRAnaTPM <- function(files, dir, group, outprefix,spe){
   library(edgeR)
-  sampleDGE <- readDGE(files, header=FALSE,path=dir, columns = c(1,2), group=group)
+  if (spe =="rat"){
+    nrow = 32883  
+  }else if (spe == "human"){
+    nrow = 58233
+  }else if (spe == "mouse"){
+    nrow = 0
+  }
+  
+  sampleDGE <- readDGE(files, header=FALSE,path=dir, columns = c(1,3), group=group, nrow=nrow)
   counts = sampleDGE$counts
   #get the gene length
   gene_length = getGeneLengths(spe)

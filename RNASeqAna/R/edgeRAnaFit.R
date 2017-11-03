@@ -12,7 +12,16 @@
 
 edgeRAnaFit <- function(files, dir, group, outprefix, spe){
   library(edgeR)
-  sampleDGE <- readDGE(files, path=dir, columns = c(1,2), group=group,header=FALSE)
+  if (spe =="rat"){
+    nrow = 32883  
+  }else if (spe == "human"){
+    nrow = 58233
+  }else if (spe == "mouse"){
+    nrow = 29209
+  }
+  
+  
+  sampleDGE <- readDGE(files, path=dir, columns = c(1,3), group=group,header=FALSE, nrow = nrow)
   #filter the meaningful count row
   keep <- rowSums(cpm(sampleDGE) > 1) >=2
   sample_keep <- sampleDGE[keep, , keep.lib.sizes=FALSE]

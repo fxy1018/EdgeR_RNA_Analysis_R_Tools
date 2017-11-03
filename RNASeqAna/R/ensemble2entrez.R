@@ -17,9 +17,10 @@ ensemble2entrez <- function(geneIds,spe){
   listMarts(mart, host="www.ensembl.org")
   if (spe == "human"){
     mart <- useDataset("hsapiens_gene_ensembl", mart=mart)
-  }
-  else if (spe == "rat"){
+  }else if (spe == "rat"){
     mart <- useDataset("rnorvegicus_gene_ensembl", mart=mart)
+  }else if (spe == "mouse"){
+    mart <- useDataset("mmusculus_gene_ensembl", mart=mart)
   }
   
 
